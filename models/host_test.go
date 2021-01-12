@@ -10,7 +10,7 @@ func TestHost_Map(t *testing.T) {
 		ID       string
 		IP       string
 		Name     string
-		Metadata map[string]interface{}
+		Metadata metadata
 		Status   bool
 	}
 	tests := []struct {
@@ -24,7 +24,7 @@ func TestHost_Map(t *testing.T) {
 				ID:   "Host 1",
 				IP:   "192.168.122.236",
 				Name: "Linux",
-				Metadata: map[string]interface{}{
+				Metadata: metadata{
 					"Os":      "Linux",
 					"Version": "17.2",
 				},
@@ -34,26 +34,11 @@ func TestHost_Map(t *testing.T) {
 				"id":   "Host 1",
 				"ip":   "192.168.122.236",
 				"name": "Linux",
-				"metadata": map[string]interface{}{
+				"metadata": metadata{
 					"Os":      "Linux",
 					"Version": "17.2",
 				},
 				"status": true,
-			},
-		},
-		{
-			name: "success - host2 with fewer fields",
-			fields: fields{
-				ID:       "Host 2",
-				IP:       "192.168.0.242",
-				Metadata: map[string]interface{}{},
-			},
-			want: map[string]interface{}{
-				"id":       "Host 2",
-				"ip":       "192.168.0.242",
-				"name":     "",
-				"metadata": map[string]interface{}{},
-				"status":   false,
 			},
 		},
 	}
@@ -78,7 +63,7 @@ func TestHost_Names(t *testing.T) {
 		ID       string
 		IP       string
 		Name     string
-		Metadata map[string]interface{}
+		Metadata metadata
 		Status   bool
 	}
 	tests := []struct {
@@ -92,7 +77,7 @@ func TestHost_Names(t *testing.T) {
 				ID:   "Host 1",
 				IP:   "192.168.122.236",
 				Name: "Linux",
-				Metadata: map[string]interface{}{
+				Metadata: metadata{
 					"Os":      "Linux",
 					"Version": "17.2",
 				},
