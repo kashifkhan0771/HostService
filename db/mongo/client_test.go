@@ -10,8 +10,9 @@ import (
 )
 
 func Test_client_AddHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "27017")
-	_ = os.Setenv("DB_HOST", "localhost")
+	_ = os.Setenv("DB_HOST", "host-service-mongo-db")
 
 	type args struct {
 		host *models.Host
@@ -39,12 +40,15 @@ func Test_client_AddHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			c, _ := NewClient(db.Option{})
 			if c != nil {
 				_, err := c.AddHost(tt.args.host)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("AddHost() error = %v, wantErr %v", err, tt.wantErr)
+
 					return
 				}
 			}
@@ -53,8 +57,9 @@ func Test_client_AddHost(t *testing.T) {
 }
 
 func Test_client_DeleteHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "27017")
-	_ = os.Setenv("DB_HOST", "localhost")
+	_ = os.Setenv("DB_HOST", "host-service-mongo-db")
 	c, _ := NewClient(db.Option{})
 	host := &models.Host{IP: "191.191.191.0", Name: "Ubuntu", Metadata: map[string]interface{}{
 		"OS":      "Linux",
@@ -78,7 +83,9 @@ func Test_client_DeleteHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if err := c.DeleteHost(tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteHost() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -87,8 +94,9 @@ func Test_client_DeleteHost(t *testing.T) {
 }
 
 func Test_client_GetHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "27017")
-	_ = os.Setenv("DB_HOST", "localhost")
+	_ = os.Setenv("DB_HOST", "host-service-mongo-db")
 
 	c, _ := NewClient(db.Option{})
 	host := &models.Host{IP: "189.191.0.1", Name: "Linux", Metadata: map[string]interface{}{
@@ -115,10 +123,13 @@ func Test_client_GetHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := c.GetHost(tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetHost() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
@@ -129,8 +140,9 @@ func Test_client_GetHost(t *testing.T) {
 }
 
 func Test_client_UpdateHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "27017")
-	_ = os.Setenv("DB_HOST", "localhost")
+	_ = os.Setenv("DB_HOST", "host-service-mongo-db")
 
 	c, _ := NewClient(db.Option{})
 	type args struct {

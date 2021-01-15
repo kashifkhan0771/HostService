@@ -1,10 +1,10 @@
 package models
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 	"fmt"
 
-	"database/sql/driver"
 	"github.com/fatih/structs"
 )
 
@@ -21,24 +21,24 @@ type Host struct {
 
 func (md metadata) Value() (driver.Value, error) {
 	j, err := json.Marshal(md)
+
 	return j, err
 }
 
 func (md *metadata) Scan(src interface{}) error {
 	source, ok := src.([]byte)
 	if !ok {
-		fmt.Println("Type assertion .([]byte) failed.")
+		fmt.Printf("Type assertion .([]byte) failed.")
 	}
 
 	var i interface{}
-	err := json.Unmarshal(source, &i)
-	if err != nil {
+	if err := json.Unmarshal(source, &i); err != nil {
 		return err
 	}
 
 	*md, ok = i.(map[string]interface{})
 	if !ok {
-		fmt.Println("Type assertion .(map[string]interface{}) failed.")
+		fmt.Printf("Type assertion .(map[string]interface{}) failed.")
 	}
 
 	return nil
@@ -49,7 +49,7 @@ func (h *Host) Map() map[string]interface{} {
 	return structs.Map(h)
 }
 
-//Names return field names of Host model.
+// Names return field names of Host model.
 func (h *Host) Names() []string {
 	fields := structs.Fields(h)
 
@@ -62,5 +62,6 @@ func (h *Host) Names() []string {
 		}
 		names[i] = name
 	}
+
 	return names
 }

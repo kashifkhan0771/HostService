@@ -1,0 +1,105 @@
+---
+swagger: "2.0"
+info:
+  description: "A Host Management System"
+  version: "1.0.0"
+  title: "Host Management"
+host: "localhost:8080"
+basePath: "/"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+paths:
+  /host:
+    post:
+      operationId: "addHost"
+      parameters:
+        - in: "body"
+          name: "host"
+          description: "host's detail"
+          required: false
+          schema:
+            $ref: "#/definitions/Host"
+      responses:
+        201:
+          description: "host added"
+          schema:
+            $ref: "#/definitions/Host"
+        409:
+          description: "host already exist"
+        500:
+          description: "internal server error"
+        400:
+          description: "bad request"
+  /host/{ID}:
+    get:
+      operationId: "getHost"
+      parameters:
+        - in: "path"
+          type: "string"
+          name: "ID"
+          required: true
+          description: "UUID of the host"
+      description: "return host based on UUID"
+      responses:
+        200:
+          description: "host response"
+          schema:
+            $ref: "#/definitions/Host"
+        404:
+          description: "host not found"
+        500:
+          description: "internal server error"
+
+    put:
+      operationId: "editHost"
+      parameters:
+        - in: "path"
+          type: "string"
+          name: "ID"
+          required: true
+          description: "UUID of the host"
+      responses:
+        200:
+          description: "host updated"
+          schema:
+            $ref: "#/definitions/Host"
+        500:
+          description: "internal server error"
+        400:
+          description: "bad request"
+    delete:
+      operationId: "deleteHost"
+      parameters:
+        - in: "path"
+          name: "ID"
+          type: "string"
+          description: "UUID of the host"
+          required: true
+      responses:
+        204:
+          description: "host deleted"
+        500:
+          description: "internal server error"
+        400:
+          description: "bad request"
+definitions:
+  Host:
+    type: "object"
+    properties:
+      ID:
+        type: "string"
+      IP:
+        type: "string"
+      Name:
+        type: "string"
+      MetaData:
+        description: "a (key, value) map"
+        type: "object"
+        additionalProperties:
+            type: "object"
+      Status:
+        type: "boolean"

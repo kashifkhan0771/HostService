@@ -28,11 +28,13 @@ var datastoreFactories = make(map[string]DataStoreFactory)
 func Register(name string, factory DataStoreFactory) {
 	if factory == nil {
 		log.Fatalf("Datastore factory %s does not exist.", name)
+
 		return
 	}
 	_, ok := datastoreFactories[name]
 	if ok {
 		log.Fatalf("Datastore factory %s already registered. Ignoring.", name)
+
 		return
 	}
 	datastoreFactories[name] = factory

@@ -33,11 +33,12 @@ type client struct {
 func formatDSN() string {
 	cfg := mysql.NewConfig()
 	cfg.Net = "tcp"
-	cfg.Addr = fmt.Sprintf("%s:%s", viper.GetString(config.DbHost), viper.GetString(config.DbPort))
-	cfg.DBName = viper.GetString(config.DbName)
+	cfg.Addr = fmt.Sprintf("%s:%s", viper.GetString(config.DBHost), viper.GetString(config.DBPort))
+	cfg.DBName = viper.GetString(config.DBName)
 	cfg.ParseTime = true
-	cfg.User = viper.GetString(config.DbUser)
-	cfg.Passwd = viper.GetString(config.DbPass)
+	cfg.User = viper.GetString(config.DBUser)
+	cfg.Passwd = viper.GetString(config.DBPass)
+
 	return cfg.FormatDSN()
 }
 
@@ -48,6 +49,7 @@ func NewClient(conf db.Option) (db.DataStore, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to db")
 	}
+
 	return &client{db: cli}, nil
 }
 
@@ -55,12 +57,7 @@ func (c *client) AddHost(host *models.Host) (string, error) {
 	if host.ID != "" {
 		return "", errors.New("id is not empty")
 	}
-
 	host.ID = uuid.NewV4().String()
-	//jsonStr, err := json.Marshal(host.Metadata)
-	//if err == nil{
-	//	fmt.Println(string(jsonStr))
-	//}
 	names := host.Names()
 	query := fmt.Sprintf(`INSERT INTO %s (%s) VALUES(%s)`, hostTableName,
 		strings.Join(names, ","), strings.Join(mkPlaceHolder(names, ":", func(name, prefix string) string {
@@ -76,22 +73,23 @@ func (c *client) AddHost(host *models.Host) (string, error) {
 func (c *client) GetHost(id string) (*models.Host, error) {
 	var stu models.Host
 	if err := c.db.Get(&stu, fmt.Sprintf(`SELECT * FROM %s WHERE id = '%s'`, hostTableName, id)); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domainErr.NewAPIError(domainErr.NotFound, fmt.Sprintf("Host: %s not found", id))
 		}
+
 		return nil, err
 	}
+
 	return &stu, nil
 }
 
-func (c *client) UpdateHost(Host *models.Host) error {
-	names := Host.Names()
+func (c *client) UpdateHost(host *models.Host) error {
+	names := host.Names()
 	query := fmt.Sprintf(`UPDATE %s SET %s WHERE id= '%s'`, hostTableName,
 		strings.Join(mkPlaceHolder(names, "=:", func(name, prefix string) string {
 			return name + prefix + name
-		}), ","), Host.ID)
-	log().Info(query)
-	if _, err := c.db.NamedExec(query, Host); err != nil {
+		}), ","), host.ID)
+	if _, err := c.db.NamedExec(query, host); err != nil {
 		return errors.Wrap(err, "failed to update Host")
 	}
 
@@ -99,9 +97,15 @@ func (c *client) UpdateHost(Host *models.Host) error {
 }
 
 func (c *client) DeleteHost(id string) error {
-	if _, err := c.db.Query(fmt.Sprintf(`DELETE FROM %s WHERE id= '%s'`, hostTableName, id)); err != nil {
+	query := fmt.Sprintf(`DELETE FROM %s WHERE id= '%s'`, hostTableName, id)
+	rows, err := c.db.Query(query)
+	if err != nil {
 		return errors.Wrap(err, "failed to delete Host")
 	}
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	return nil
 }
