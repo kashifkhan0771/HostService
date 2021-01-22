@@ -10,6 +10,7 @@ import (
 )
 
 func Test_client_AddHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "3306")
 	_ = os.Setenv("DB_HOST", "localhost")
 	_ = os.Setenv("DB_USER", "root")
@@ -31,12 +32,15 @@ func Test_client_AddHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			c, _ := NewClient(db.Option{})
 			if c != nil {
 				_, err := c.AddHost(tt.args.host)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("AddHost() error = %v, wantErr %v", err, tt.wantErr)
+
 					return
 				}
 			}
@@ -45,6 +49,7 @@ func Test_client_AddHost(t *testing.T) {
 }
 
 func Test_client_DeleteHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "3306")
 	_ = os.Setenv("DB_HOST", "localhost")
 	_ = os.Setenv("DB_USER", "root")
@@ -72,7 +77,9 @@ func Test_client_DeleteHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if c != nil {
 				if err := c.DeleteHost(tt.args.id); (err != nil) != tt.wantErr {
 					t.Errorf("DeleteHost() error = %v, wantErr %v", err, tt.wantErr)
@@ -83,6 +90,7 @@ func Test_client_DeleteHost(t *testing.T) {
 }
 
 func Test_client_GetHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "3306")
 	_ = os.Setenv("DB_HOST", "localhost")
 	_ = os.Setenv("DB_USER", "root")
@@ -111,11 +119,14 @@ func Test_client_GetHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if c != nil {
 				got, err := c.GetHost(tt.args.id)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("GetHost() error = %v, wantErr %v", err, tt.wantErr)
+
 					return
 				}
 				if !reflect.DeepEqual(got, tt.want) {
@@ -127,6 +138,7 @@ func Test_client_GetHost(t *testing.T) {
 }
 
 func Test_client_UpdateHost(t *testing.T) {
+	t.Parallel()
 	_ = os.Setenv("DB_PORT", "3306")
 	_ = os.Setenv("DB_HOST", "localhost")
 	_ = os.Setenv("DB_USER", "root")
@@ -149,7 +161,9 @@ func Test_client_UpdateHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if c != nil {
 				if err := c.UpdateHost(tt.args.host); (err != nil) != tt.wantErr {
 					t.Errorf("UpdateHost() error = %v, wantErr %v", err, tt.wantErr)

@@ -6,11 +6,11 @@ import (
 
 // keys for database configuration.
 const (
-	DbName = "db.name"
-	DbHost = "db.ip"
-	DbPort = "db.port"
-	DbUser = "db.user"
-	DbPass = "db.pass"
+	DBName = "db.name"
+	DBHost = "db.ip"
+	DBPort = "db.port"
+	DBUser = "db.user"
+	DBPass = "db.pass"
 
 	ServerHost = "server.host"
 	ServerPort = "server.port"
@@ -18,20 +18,20 @@ const (
 
 func init() {
 	// env var for db
-	_ = viper.BindEnv(DbName, "DB_NAME")
-	_ = viper.BindEnv(DbHost, "DB_HOST")
-	_ = viper.BindEnv(DbPort, "DB_PORT")
-	_ = viper.BindEnv(DbUser, "DB_USER")
-	_ = viper.BindEnv(DbPass, "DB_PASS")
+	_ = viper.BindEnv(DBName, "DB_NAME")
+	_ = viper.BindEnv(DBHost, "DB_HOST")
+	_ = viper.BindEnv(DBPort, "DB_PORT")
+	_ = viper.BindEnv(DBUser, "DB_USER")
+	_ = viper.BindEnv(DBPass, "DB_PASS")
 
 	// env var for server
 	_ = viper.BindEnv(ServerHost, "SERVER_HOST")
 	_ = viper.BindEnv(ServerPort, "SERVER_PORT")
 
 	// defaults
-	viper.SetDefault(DbName, "host_service")
-	viper.SetDefault(DbHost, "localhost")
-	viper.SetDefault(DbPort, "3306")
+	viper.SetDefault(DBName, "host_service")
+	viper.SetDefault(DBHost, "localhost")
+	viper.SetDefault(DBPort, "3306")
 
 	viper.SetDefault(ServerHost, "127.0.0.1")
 	viper.SetDefault(ServerPort, "8080")

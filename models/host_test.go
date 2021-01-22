@@ -6,6 +6,7 @@ import (
 )
 
 func TestHost_Map(t *testing.T) {
+	t.Parallel()
 	type fields struct {
 		ID       string
 		IP       string
@@ -43,7 +44,9 @@ func TestHost_Map(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			h := &Host{
 				ID:       tt.fields.ID,
 				IP:       tt.fields.IP,
@@ -59,6 +62,7 @@ func TestHost_Map(t *testing.T) {
 }
 
 func TestHost_Names(t *testing.T) {
+	t.Parallel()
 	type fields struct {
 		ID       string
 		IP       string
@@ -87,7 +91,9 @@ func TestHost_Names(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			h := &Host{
 				ID:       tt.fields.ID,
 				IP:       tt.fields.IP,

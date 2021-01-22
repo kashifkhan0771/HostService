@@ -31,7 +31,7 @@ type client struct {
 
 // NewClient initializes a mysql database connection.
 func NewClient(conf db.Option) (db.DataStore, error) {
-	uri := fmt.Sprintf("mongodb://%s:%s", viper.GetString(config.DbHost), viper.GetString(config.DbPort))
+	uri := fmt.Sprintf("mongodb://%s:%s/?connect=direct", viper.GetString(config.DBHost), viper.GetString(config.DBPort))
 	log().Infof("initializing mongodb: %s", uri)
 	cli, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
@@ -47,7 +47,7 @@ func (c *client) AddHost(host *models.Host) (string, error) {
 	}
 
 	host.ID = uuid.NewV4().String()
-	collection := c.conn.Database(viper.GetString(config.DbName)).Collection(hostCollection)
+	collection := c.conn.Database(viper.GetString(config.DBName)).Collection(hostCollection)
 	if _, err := collection.InsertOne(context.TODO(), host); err != nil {
 		return "", errors.Wrap(err, "failed to add host")
 	}
@@ -56,19 +56,19 @@ func (c *client) AddHost(host *models.Host) (string, error) {
 }
 
 func (c *client) GetHost(id string) (*models.Host, error) {
-	var stu *models.Host
-	collection := c.conn.Database(viper.GetString(config.DbName)).Collection(hostCollection)
-	if err := collection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&stu); err != nil {
-		if err == mongo.ErrNoDocuments {
+	var host *models.Host
+	collection := c.conn.Database(viper.GetString(config.DBName)).Collection(hostCollection)
+	if err := collection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&host); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, domainErr.NewAPIError(domainErr.NotFound, fmt.Sprintf("host: %s not found", id))
 		}
-		return nil, err
 	}
-	return stu, nil
+
+	return host, nil
 }
 
 func (c *client) DeleteHost(id string) error {
-	collection := c.conn.Database(viper.GetString(config.DbName)).Collection(hostCollection)
+	collection := c.conn.Database(viper.GetString(config.DBName)).Collection(hostCollection)
 	if _, err := collection.DeleteOne(context.TODO(), bson.M{"_id": id}); err != nil {
 		return errors.Wrap(err, "failed to delete host")
 	}
@@ -77,7 +77,7 @@ func (c *client) DeleteHost(id string) error {
 }
 
 func (c *client) UpdateHost(host *models.Host) error {
-	collection := c.conn.Database(viper.GetString(config.DbName)).Collection(hostCollection)
+	collection := c.conn.Database(viper.GetString(config.DBName)).Collection(hostCollection)
 	if _, err := collection.UpdateOne(context.TODO(), bson.M{"_id": host.ID}, bson.M{"$set": host}); err != nil {
 		return errors.Wrap(err, "failed to update host")
 	}
